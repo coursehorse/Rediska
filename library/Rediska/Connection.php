@@ -391,7 +391,9 @@ class Rediska_Connection extends Rediska_Options
      */
     protected function _readAndThrowException($length)
     {
-        $data = @stream_get_contents($this->_socket, $length);
+        // In HHVM this was't returning the entire response https://github.com/facebook/hhvm/issues/6921
+        // $data = @stream_get_contents($this->_socket, $length);
+        $data = @fgets($this->_socket, $length + 1);
 
         $info = stream_get_meta_data($this->_socket);
         if ($info['timed_out']) {
